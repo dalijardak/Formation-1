@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop/model/product.dart';
+import 'package:shop/screens/login.dart';
 import 'package:shop/view/productListView.dart';
 import 'package:shop/view/productView.dart';
 
@@ -9,11 +10,26 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  PageController pageController;
   int currentIndex = 0;
   void onSelect(int index) {
     setState(() {
       currentIndex = index;
+      pageController.animateToPage(currentIndex,
+          duration: Duration(milliseconds: 300), curve: Curves.linear);
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    pageController = new PageController();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    pageController.dispose();
   }
 
   List<Widget> _screens = [
@@ -39,13 +55,24 @@ class _HomeState extends State<Home> {
       child: Text("Dashboard"),
     ),
     Center(
-      child: Text("Login"),
+      child: Text("Bag"),
+    ),
+    Center(
+      child: Login(),
     ),
   ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _screens[currentIndex],
+      body: PageView(
+        controller: pageController,
+        onPageChanged: (index) {
+          setState(() {
+            currentIndex = index;
+          });
+        },
+        children: _screens,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
         selectedItemColor: Colors.redAccent,
@@ -54,13 +81,18 @@ class _HomeState extends State<Home> {
           BottomNavigationBarItem(
             icon: Icon(Icons.shop),
             label: "Shop",
-            backgroundColor: Colors.red,
           ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.dashboard,
             ),
             label: "Dashboard",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.shopping_cart,
+            ),
+            label: "Bag",
           ),
           BottomNavigationBarItem(
             icon: Icon(
